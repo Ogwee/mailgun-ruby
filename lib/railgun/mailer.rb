@@ -176,9 +176,13 @@ module Railgun
     mb.from mail[:from]
     mb.reply_to(mail[:reply_to].to_s) if mail[:reply_to].present?
     mb.subject mail.subject
-    mb.template(mail.mailgun_template) if mail.mailgun_template.present?
-    mb.body_html extract_body_html(mail)
-    mb.body_text extract_body_text(mail)
+
+    if mail.mailgun_template
+      mb.template(mail.mailgun_template)
+    else
+      mb.body_html extract_body_html(mail)
+      mb.body_text extract_body_text(mail)
+    end
 
     [:to, :cc, :bcc].each do |rcpt_type|
       addrs = mail[rcpt_type] || nil
